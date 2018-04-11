@@ -7,7 +7,7 @@
 		"dev": "nuxt",
 		"build": "nuxt build",
 		"start": "nuxt start",
- 		"heroku-postbuild": "npm run build",
+		"heroku-postbuild": "npm run build",
 		"generate": "nuxt generate",
 		"lint": "eslint --ext .js,.vue --ignore-path .gitignore .",
 		"precommit": "npm run lint"
@@ -21,6 +21,7 @@
 	"dependencies": {
 		"axios": "^0.16.2",
 		"document-offset": "^1.0.4",
+		"downloadjs": "^1.4.7",
 		"lodash": "^4.17.4",
 		"node-sass": "^4.7.2",
 		"nuxt": "latest",

@@ -4,7 +4,8 @@
     <input v-model="sourceUrl"/>
     <button @click="getPdf()">get pdf print</button>
     <span v-if="loadingpdf">making pdf...</span>
-    <a v-if="!loadingpdf && pdf" download="my document" :href="'data:application/pdf;base64,'+pdf.result.data" >Download pdf document</a>
+    <span v-if="error">Ups... Something went wrong!</span>
+    <!-- <a v-if="!loadingpdf && pdf" download="my document" :href="'data:application/pdf;base64,'+pdf.result.data" >Download pdf document</a> -->
   </div>
   <div v-else class="container">
     <div>
@@ -24,6 +25,10 @@
 <script>
 import genericcomp from '~/components/_genericComp.vue'
 import postlistcomp from '~/components/postListComp.vue'
+import download from "downloadjs"
+// require("downloadjs")(data, strFileName, strMimeType);
+
+
 
 import axios from 'axios'
 import {
@@ -41,6 +46,7 @@ export default {
       sourceUrl: 'rasl.nu',
       pdf: '',
       erros: [],
+      error: false,
       loadingpdf: false
     }
   },
@@ -51,6 +57,8 @@ export default {
   },
   methods: {
     getPdf: function() {
+
+
       this.loadingpdf = true
 
       axios.post('http://template-studio.nl:3001/v1/convert', {
@@ -63,7 +71,7 @@ export default {
           "converter": {
             "uri": this.sourceUrl,
             "extend": {
-              "javascript-delay": "4000",
+              "javascript-delay": "1",
               "margin-top": "5mm",
               "margin-bottom": "5mm",
               "margin-left": "50mm",
@@ -75,12 +83,14 @@ export default {
         })
         .then(response => {
           // JSON responses are automatically parsed.
-          this.pdf = response.data
+          // this.pdf = response.data
           this.loadingpdf = false
+          download('data:application/pdf;base64,'+response.data.result.data, this.sourceUrl+'.pdf','application/pdf');
         })
         .catch(e => {
-          this.errors.push(e)
+          // this.errors.push(e)
           this.loadingpdf= false
+          this.error = true
         })
     }
   },
