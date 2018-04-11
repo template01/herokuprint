@@ -63,7 +63,7 @@ export default {
           "converter": {
             "uri": this.sourceUrl,
             "extend": {
-              "javascript-delay": "15000",
+              "javascript-delay": "4000",
               "margin-top": "5mm",
               "margin-bottom": "5mm",
               "margin-left": "50mm",
