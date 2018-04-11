@@ -1,9 +1,16 @@
 <template>
 <div class="mt-80 mb-80 mr-20 ml-20">
   <div v-if="appinitated" class="container">
-    <input v-model="sourceUrl"/>
+    <input v-model="sourceUrl" />
     <button @click="getPdf()">get pdf print</button>
-    <span v-if="loadingpdf">making pdf...</span>
+    <!-- <span v-if="loadingpdf">making pdf...</span> -->
+    <br />
+    <br />
+    <div class="progress">
+      <div class="bar" :style="{'width':+progress+'%'}">
+
+      </div>
+    </div>
     <span v-if="error">Ups... Something went wrong!</span>
     <!-- <a v-if="!loadingpdf && pdf" download="my document" :href="'data:application/pdf;base64,'+pdf.result.data" >Download pdf document</a> -->
   </div>
@@ -47,7 +54,8 @@ export default {
       pdf: '',
       erros: [],
       error: false,
-      loadingpdf: false
+      loadingpdf: false,
+      progress: 0
     }
   },
   computed: {
@@ -60,6 +68,22 @@ export default {
 
 
       this.loadingpdf = true
+      this.progress = 0
+      var vm = this
+      var startSlow
+      var startTime = new Date().getTime()
+      var startFast = setInterval(function() {
+        vm.progress = vm.progress + 1
+        var currentTime = new Date().getTime()
+        console.log(currentTime-startTime)
+        if(currentTime-startTime>3000){
+          clearInterval(startFast);
+          var startSlow = setInterval(function() {
+            vm.progress = vm.progress + 1
+          }, 800);
+        }
+      }, 100);
+
 
       axios.post('http://template-studio.nl:3001/v1/convert', {
           headers: {
@@ -71,6 +95,9 @@ export default {
           "converter": {
             "uri": this.sourceUrl,
             "extend": {
+              "image-dpi":"300",
+              // "grayscale":"",
+              "image-quality":"80",
               "javascript-delay": "1",
               "margin-top": "5mm",
               "margin-bottom": "5mm",
@@ -82,15 +109,27 @@ export default {
 
         })
         .then(response => {
-          // JSON responses are automatically parsed.
-          // this.pdf = response.data
+
+          console.log(response.status);
+          console.log(response.statusText);
+          console.log(response.headers);
+          console.log(response.config);
           this.loadingpdf = false
-          download('data:application/pdf;base64,'+response.data.result.data, this.sourceUrl+'.pdf','application/pdf');
+          this.progress = 100
+          clearInterval(startFast);
+          clearInterval(startSlow);
+
+          download('data:application/pdf;base64,' + response.data.result.data, this.sourceUrl + '.pdf', 'application/pdf');
+
         })
         .catch(e => {
           // this.errors.push(e)
-          this.loadingpdf= false
+          clearInterval(startFast);
+          clearInterval(startSlow);
+          this.loadingpdf = false
           this.error = true
+          this.progress = 0
+
         })
     }
   },
@@ -122,5 +161,18 @@ export default {
 </script>
 
 <style>
+.progress {
+  width: 100px;
+  height: 10px;
+  background: red;
+  position: relative;
+}
 
+.bar {
+  width: 10px;
+  height: 10px;
+  position: absolute;
+  background: green;
+  transition: width 0.4s;
+}
 </style>
