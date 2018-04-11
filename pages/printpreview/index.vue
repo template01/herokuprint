@@ -1,7 +1,7 @@
 <template>
 <div class="">
   <div class="">
-    <div v-for="item in content.slice(0, 10)" >
+    <div v-for="item in content.slice(0, 25)" >
       <h1 class="is-size-3" v-html="item.title"></h1>
       <p class="is-size-5" v-html="item.body"></p>
       <img :src="images[Math.floor(Math.random() * images.length)]" />
