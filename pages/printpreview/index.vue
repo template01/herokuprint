@@ -1,7 +1,7 @@
 <template>
 <div class="">
   <div class="">
-    <div v-for="item in content.slice(0, 20)" >
+    <div v-for="item in content.slice(0, 5)" >
       <h1 class="is-size-3" v-html="item.title"></h1>
       <p class="is-size-5" v-html="item.body"></p>
       <img :src="'https://picsum.photos/2000?'+Math.random()" />
