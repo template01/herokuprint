@@ -1,10 +1,9 @@
 <template>
 <div class="">
   <div class="">
-    <div v-for="item in content.slice(0, 25)" >
-      <h1 class="is-size-3" v-html="item.title"></h1>
-      <p class="is-size-5" v-html="item.body"></p>
-      <img :src="images[Math.floor(Math.random() * images.length)]" />
+    <div v-for="item in content.slice(0, 250)" >
+      <h1 class="is-size-3" v-html="item.title.rendered"></h1>
+      <div class="is-size-5" v-html="item.content.rendered"></div>
     </div>
   </div>
 
@@ -43,7 +42,7 @@ export default {
     redirect
   }) {
 
-      let { data } = await axios.get(store.state.apiRoot + '/posts')
+      let { data } = await axios.get('http://reinvented.wdka.nl/backend/wp-json/wp/v2/posts?per_page=100')
       return { content: data }
 
   },
